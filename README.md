@@ -41,3 +41,20 @@ Most times, people call
 Which do you use?
 - If you can let a test keep running, use Error/Errorf
 - If a test is completely over and running further won't help at all, use Fatal/Fatalf
+
+## 07 - Running tests in parallel
+
+Sometimes running many tests in parallel can provide a ton of value.
+
+Example use cases:
+1. Simulating a real-world scenario
+    - A web app with many users
+2. Verify that a type is truly threadsafe
+    - Verify that in-memory cache can handle multiple concurrent web requests using it
+
+Parallelism could mean more work:
+- Tests can't use as many hard-coded values; eg unique email constraints
+- Tests might try to use shared resources incorrectly; eg image manipulation on the same image or sharing a DB that doesn't support multiple concurrent connecions
+
+
+
