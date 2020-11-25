@@ -59,4 +59,11 @@ Parallelism could mean more work:
 ## 08 - Race conditions
 
 
+## 09 - Comparing objects for equality
 
+### Golden files
+
+If we need to compare big files (large csv, image, etc) then trying to recreate the `want` variable can be hard.
+
+Common solution: store a "golden file" - a file representing the desired test output - in our actual test source directory
+and to just compare to it directly.
