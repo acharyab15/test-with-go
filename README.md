@@ -56,5 +56,7 @@ Parallelism could mean more work:
 - Tests can't use as many hard-coded values; eg unique email constraints
 - Tests might try to use shared resources incorrectly; eg image manipulation on the same image or sharing a DB that doesn't support multiple concurrent connecions
 
+## 08 - Race conditions
+
 
 
