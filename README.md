@@ -67,3 +67,10 @@ If we need to compare big files (large csv, image, etc) then trying to recreate 
 
 Common solution: store a "golden file" - a file representing the desired test output - in our actual test source directory
 and to just compare to it directly.
+
+## 11 - Controlling which tests are run
+
+- `go test -v -run TestSomething`
+- `go test ./...`
+- `for pkg in \*\; do go test "./$pkg"; done`
+- `// +build integration (build tags)`
