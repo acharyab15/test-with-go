@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/joncalhoun/twg/alert"
+	"github.com/acharyab15/test-with-go/alert"
 	"golang.org/x/net/html"
 )
 
