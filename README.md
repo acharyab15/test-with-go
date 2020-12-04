@@ -80,3 +80,67 @@ and to just compare to it directly.
 `xxx_internal_test.go` => internal tests
 `xxx_test.go` => external tests
 `export_test.go` => export unexported stuff for testing
+
+## 14 - Types of tests
+
+### Unit tests: 
+
+Testing very small things, like a function. Usually in isolation
+
+Example:
+
+```go
+// This is the unit - a function
+func Magic(a, b int) int {
+    return (a+b) * (a+b)
+}
+
+// This is the unit test
+func TestMagic(t *testing.T) {
+    got := Magic(1,2)
+    if got != 9 {
+        t.Errorf("Magic() = %v, want %v", got, 9)
+    }
+}
+```
+
+Very common; and require very little setup.
+
+### Integration tests:
+
+Testing 2+ systems together
+
+Example:
+```go
+type UserStore struct {
+    db *sql.DB
+}
+func (us *UserStore) Create(user *User) error {
+    // .. this uses the us.db (the sql database) to 
+    // create a new user entry from the user object passed in.
+}
+
+// Integration tests might use a REAL database, meaning it is 
+// testing the integration of our UserStore with a real SQL
+// DB and not some mocked out DB.
+func TestUserStore_Create(t *testing.T) {
+    // ..
+}
+```
+
+Unit tests, especially ones with  mocks, only test that other systems works as we expect it to work.
+Integration tests will verify that our expectations of how the system should work are correct.
+
+### End-to-end tests
+
+Testing the entire application, or most of it. 
+Usually in a way similar to how end users would use the app
+There can be a fuzzy line between integration and E2E tests. Typically involves using the entire system in a way similar to how end users would use it.
+
+Pros:
+Great for simulating real user scenarios.
+Great for catching bugs - touches a ton of code.
+Could involve *multiple systems* 
+
+Con:
+Not great at pointing at WHY bugs occured or how to fix them quickly/clearly.
