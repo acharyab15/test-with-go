@@ -74,3 +74,9 @@ and to just compare to it directly.
 - `go test ./...`
 - `for pkg in \*\; do go test "./$pkg"; done`
 - `// +build integration (build tags)`
+
+## 13 - External and Internal Testing
+
+`xxx_internal_test.go` => internal tests
+`xxx_test.go` => external tests
+`export_test.go` => export unexported stuff for testing
