@@ -144,3 +144,7 @@ Could involve *multiple systems*
 
 Con:
 Not great at pointing at WHY bugs occured or how to fix them quickly/clearly.
+
+## 16 - Dependency Injection
+
+
