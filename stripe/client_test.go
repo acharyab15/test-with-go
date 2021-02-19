@@ -13,6 +13,7 @@ import (
 
 var (
 	apiKey string
+	update bool
 )
 
 const (
@@ -23,6 +24,7 @@ const (
 
 func init() {
 	flag.StringVar(&apiKey, "key", "", "Your TEST secret key for the Stripe API. If present, integration tests will be run using this key.")
+	flag.BoolVar(&update, "update", false, "Set this flag to update the response used in local tests. This requires that the key flag is set so that we can interact with the Stripe API.")
 }
 
 func TestClient_Local(t *testing.T) {
@@ -69,13 +71,31 @@ func TestClient_Local(t *testing.T) {
 	}
 }
 
+func stripeClient(t *testing.T) (*stripe.Client, func()) {
+	teardown := make([]func(), 0)
+	c := stripe.Client{
+		Key: apiKey,
+	}
+	if update {
+		rc := &recorderClient{}
+		c.HttpClient = rc
+		teardown = append(teardown, func() {
+			t.Logf("Length of responses = %d", len(rc.responses))
+			for _, res := range rc.responses {
+				t.Logf("Pretending to save res: %v", res)
+			}
+		})
+	}
+	return &c, func() {
+		for _, fn := range teardown {
+			fn()
+		}
+	}
+}
+
 func TestClient_Customer(t *testing.T) {
 	if apiKey == "" {
 		t.Skip("No API key provided")
-	}
-
-	c := stripe.Client{
-		Key: apiKey,
 	}
 
 	type checkFn func(t *testing.T, cus *stripe.Customer, err error)
@@ -145,6 +165,8 @@ func TestClient_Customer(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			c, teardown := stripeClient(t)
+			defer teardown()
 			cus, err := c.Customer(tc.token, tc.email)
 			for _, check := range tc.checks {
 				check(t, cus, err)
@@ -189,9 +211,8 @@ func TestClient_Charge(t *testing.T) {
 		}
 	}
 
-	c := stripe.Client{
-		Key: apiKey,
-	}
+	c, teardown := stripeClient(t)
+	defer teardown()
 	// Create a customer for the test
 	tok := "tok_amex"
 	email := "test@test.com"
@@ -218,6 +239,8 @@ func TestClient_Charge(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			c, teardown := stripeClient(t)
+			defer teardown()
 			charge, err := c.Charge(tc.customerID, tc.amount)
 			for _, check := range tc.checks {
 				check(t, charge, err)
